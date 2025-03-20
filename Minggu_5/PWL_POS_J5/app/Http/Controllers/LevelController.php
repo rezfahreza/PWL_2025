@@ -19,6 +19,6 @@ class LevelController extends Controller
         //return 'Delete data berhasil. Jumlah data yang dihapus:' .$row . ' baris';
 
         $data = DB::select('select * from m_level');
-        return view('level', ['data' => $data]);
+        //return view('level', ['data' => $data]);
     }
 }
