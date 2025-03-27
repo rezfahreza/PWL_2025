@@ -3,6 +3,7 @@
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LevelController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,4 +29,15 @@ Route::group(['prefix' => 'user'], function () {
     Route::get('/{id}/edit', [UserController::class, 'edit']);  // Menampilkan form untuk edit pengguna
     Route::put('/{id}', [UserController::class, 'update']);     // Menyimpan perubahan data pengguna
     Route::delete('/{id}', [UserController::class, 'destroy']); // Menghapus data pengguna
+});
+
+Route::group(['prefix' => 'level'], function () {
+    Route::get('/', [LevelController::class, 'index']);             
+    Route::post('/list', [LevelController::class, 'list']);       
+    Route::get('/create', [LevelController::class, 'create']);    
+    Route::post('/', [LevelController::class, 'store']);          
+    Route::get('/{id}', [LevelController::class, 'show']);        
+    Route::get('/{id}/edit', [LevelController::class, 'edit']); 
+    Route::put("/{id}", [LevelController::class, 'update']);       
+    Route::delete('/{id}', [LevelController::class, 'destroy']);  
 });
