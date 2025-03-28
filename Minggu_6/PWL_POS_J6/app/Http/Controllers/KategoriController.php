@@ -155,7 +155,7 @@ class KategoriController extends Controller
         return view('kategori.create_ajax');
     }
  
-     // Menyimpan data level melalui AJAX
+     // Menyimpan data kategori melalui AJAX
     public function store_ajax(Request $request)
     {
         if ($request->ajax() || $request->wantsJson()) {
@@ -178,14 +178,14 @@ class KategoriController extends Controller
  
             return response()->json([
                 'status' => true,
-                'message' => 'Data level berhasil disimpan.',
+                'message' => 'Data kategori berhasil disimpan.',
             ]);
         }
  
         return redirect('/');
     }
  
-     // Menampilkan halaman edit level (AJAX)
+     // Menampilkan halaman edit kategori (AJAX)
     public function edit_ajax(string $id)
     {
         $kategori = KategoriModel::find($id);
@@ -193,7 +193,7 @@ class KategoriController extends Controller
         return view('kategori.edit_ajax', ['kategori' => $kategori]);
     }
  
-    // Update data level melalui AJAX
+    // Update data kategori melalui AJAX
     public function update_ajax(Request $request, $id)
     {
         if ($request->ajax() || $request->wantsJson()) {
@@ -218,7 +218,7 @@ class KategoriController extends Controller
  
                 return response()->json([
                     'status' => true,
-                    'message' => 'Data level berhasil diupdate.',
+                    'message' => 'Data kategori berhasil diupdate.',
                 ]);
             } else {
                 return response()->json([
