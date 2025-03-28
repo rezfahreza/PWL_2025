@@ -210,11 +210,11 @@ class UserController extends Controller
         //cek apakah request berupa ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'level_id' => 'request|integer',
-                'username' => 'request|string|min:3|unique:m_user,username',
-                'nama' => 'request|string|max:100',
-                'password' => 'request|min:6'
-            ];
+                'level_id' => 'required|integer',
+                'username' => 'required|string|min:3|unique:m_user,username',
+                'nama' => 'required|string|max:100',
+                'password' => 'required|min:6'
+            ];            
 
             // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);
