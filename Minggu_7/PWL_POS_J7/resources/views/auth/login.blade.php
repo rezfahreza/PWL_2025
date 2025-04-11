@@ -55,6 +55,9 @@
             <div class="col-4">
               <button type="submit" class="btn btn-primary btn-block">Sign In</button>
             </div>
+            <div class="text-center mt-2">
+              <a href="{{ route('register') }}">Belum punya akun? Daftar disini</a>
+            </div>
           </div>
         </form>
       </div>
