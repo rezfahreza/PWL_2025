@@ -9,6 +9,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\LevelModel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class UserController extends Controller
 {
@@ -430,5 +431,21 @@ class UserController extends Controller
  
         $writer->save('php://output'); //simpan file ke output
         exit; //keluar dari scriptA
+    }
+
+    public function export_pdf()
+    {
+        $user = UserModel::select('username','nama', 'level_id')
+            ->orderBy('level_id')
+            ->with('level')
+            ->get();
+
+        // use Barryvdh\DomPDF\Facade\Pdf;
+        $pdf = Pdf::loadView('user.export_pdf', ['user' => $user]);
+        $pdf->setPaper('a4', 'portrait'); // set ukuran kertas dan orientasi
+        $pdf->setOption("isRemoteEnabled", true); // set true jika ada gambar dari url
+        $pdf->render();
+
+        return $pdf->stream('Data User '.date('Y-m-d H:i:s').'.pdf');
     }
 }
