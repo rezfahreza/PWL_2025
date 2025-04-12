@@ -448,7 +448,7 @@ class BarangController extends Controller
             $sheet->setCellValue('C' . $baris, $value->barang_nama);
             $sheet->setCellValue('D' . $baris, $value->harga_jual);
             $sheet->setCellValue('E' . $baris, $value->harga_beli);
-            $sheet->setCellValue('F' . $baris, $value->kategori->nama_kategori); //ambil nama kategori
+            $sheet->setCellValue('F' . $baris, $value->kategori->kategori_nama); //ambil nama kategori
             $no++;
             $baris++;
         }
