@@ -63,8 +63,8 @@
                 <tr>
                     <th>No</th>
                     <th>Barang</th>
-                    <th>User</th>
                     <th>Supplier</th>
+                    <th>User</th>
                     <th>Tanggal</th>
                     <th>Jumlah</th>
                     <th>Aksi</th>
@@ -98,8 +98,8 @@ data-keyboard="false" data-width="75%" aria-hidden="true"></div>
                 "type": "POST",
                 "data": function (d) {
                     d.barang_id   = $('#barang_id').val();
-                    d.user_id     = $('#user_id').val();
                     d.supplier_id = $('#supplier_id').val();
+                    d.user_id     = $('#user_id').val();
                 }
             },
             searchDelay: 1000,
@@ -116,12 +116,12 @@ data-keyboard="false" data-width="75%" aria-hidden="true"></div>
                     searchable: true
                 },
                 {
-                    data: "user.username",
+                    data: "supplier.supplier_nama",
                     orderable: false,
                     searchable: true
                 },
                 {
-                    data: "supplier.supplier_nama",
+                    data: "user.username",
                     orderable: false,
                     searchable: true
                 },
@@ -144,7 +144,7 @@ data-keyboard="false" data-width="75%" aria-hidden="true"></div>
             ]
         });
 
-        $('#barang_id, #user_id, #supplier_id').on('change', function() {
+        $('#barang_id, #supplier_id, #user_id').on('change', function() {
             dataStok.ajax.reload();
         });
 
