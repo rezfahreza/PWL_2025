@@ -8,6 +8,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -150,5 +151,11 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::get('/export_excel', [BarangController::class, 'export_excel']);
             Route::get('/export_pdf', [BarangController::class, 'export_pdf']);
         });
+    });
+
+    Route::middleware(['authorize:ADM,MNG,STF'])->group(function () {
+        Route::get('/profile', [ProfileController::class, 'index'])->name('profile');   
+        Route::get('/profile/edit_profile', [ProfileController::class, 'editProfile'])->name('profile.edit_profile');
+        Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     });
 });
