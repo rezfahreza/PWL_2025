@@ -71,6 +71,12 @@
           </a>
         </li>
         <li class="nav-item">
+          <a href="{{ url('/penjualan_detail') }}" class="nav-link {{ ($activeMenu == 'penjualan_detail')? 'active' : '' }}">
+            <i class="nav-icon fas fa-file-invoice"></i>
+            <p>Detail Penjualan</p>
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="{{ url('/logout') }}" class="btn btn-danger w-100 text-center">
             Logout
           </a>
