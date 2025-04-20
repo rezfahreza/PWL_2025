@@ -252,6 +252,12 @@ class StokController extends Controller
         ]);
     }
 
+    public function show_ajax(string $id){
+        $stok = StokModel::with(['user', 'barang', 'supplier'])->find($id);
+
+        return view('stok.show_ajax', ['stok' => $stok]);
+    }
+
     public function store_ajax(Request $request){
         //cek apakah request berupa ajax
         if ($request->ajax() || $request->wantsJson()) {

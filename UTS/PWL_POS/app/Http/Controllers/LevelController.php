@@ -154,6 +154,12 @@ class LevelController extends Controller
     {
         return view('level.create_ajax');
     }
+
+    public function show_ajax(string $id)
+    {
+        $level = LevelModel::find($id);
+        return view('level.show_ajax', ['level' => $level]);
+    }
  
     // Menyimpan data level melalui AJAX
     public function store_ajax(Request $request)

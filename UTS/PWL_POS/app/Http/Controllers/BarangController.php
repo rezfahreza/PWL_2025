@@ -235,6 +235,12 @@ class BarangController extends Controller
         return view('barang.create_ajax')->with('kategori', $kategori);
     }
 
+    public function show_ajax(string $id){
+        $barang = BarangModel::with('kategori')->find($id);
+
+        return view('barang.show_ajax', ['barang' => $barang]);
+    }
+
     public function store_ajax(Request $request){
         //cek apakah request berupa ajax
         if ($request->ajax() || $request->wantsJson()) {
