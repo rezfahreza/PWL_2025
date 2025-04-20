@@ -5,10 +5,10 @@
     <div class="card-header"> 
         <h3 class="card-title">Daftar barang</h3> 
         <div class="card-tools"> 
-            <button onclick="modalAction('{{ url('/barang/import') }}')" class="btn btn-info">Import Barang</button> 
-            <a href="{{ url('/barang/export_excel') }}" class="btn btn-primary"><i class="fa fa-file excel"></i> Export Barang</a>
-            <a href="{{ url('/barang/export_pdf') }}" class="btn btn-warning"><i class="fa fa-file pdf"></i> Export Barang</a> 
-            <button onclick="modalAction('{{ url('/barang/create_ajax') }}')" class="btn btn-success">Tambah Data (Ajax)</button> 
+            <button onclick="modalAction('{{ url('/barang/import') }}')" class="btn btn-sm btn-info mt-1">Import Barnag</button>
+            <a href="{{ url('/barnag/export_excel') }}" class="btn btn-sm btn-primary mt-1"><i class="fa fa-fileexcel"></i> Export Barang (Excel)</a>
+            <a href="{{ url('/barang/export_pdf') }}" class="btn btn-sm mt-1 btn-warning"><i class="fa fa-filepdf"></i> Export Barang (PDF)</a>
+            <button onclick="modalAction('{{ url('barang/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax (Ajax)</button> 
         </div> 
     </div> 
     <div class="card-body"> 
