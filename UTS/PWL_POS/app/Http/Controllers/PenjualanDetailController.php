@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\BarangModel;
 use App\Models\PenjualanModel;
+use App\Models\StokModel;
+use Illuminate\Support\Facades\DB;
 
 class PenjualanDetailController extends Controller
 {
@@ -197,18 +199,18 @@ class PenjualanDetailController extends Controller
         return view('penjualan_detail.show_ajax', ['detail' => $detail]);
     }
 
-    public function store_ajax(Request $request, $id)
+    public function store_ajax(Request $request)
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'barang_id'    => ['required', 'integer', 'exists:m_barang,barang_id'],
-                'penjualan_id'  => ['required', 'integer', 'exists:t_penjualan,penjualan_id'],
-                'harga' => ['required', 'integer', 'min:1'],
-                'jumlah'  => ['required', 'integer', 'min:1'],
+                'penjualan_id' => ['required', 'integer', 'exists:t_penjualan,penjualan_id'],
+                'harga'        => ['required', 'integer', 'min:1'],
+                'jumlah'       => ['required', 'integer', 'min:1'],
             ];
-
+    
             $validator = Validator::make($request->all(), $rules);
-
+    
             if ($validator->fails()) {
                 return response()->json([
                     'status'   => false,
@@ -216,72 +218,145 @@ class PenjualanDetailController extends Controller
                     'msgField' => $validator->errors(),
                 ]);
             }
-
-            $detail = PenjualanDetailModel::find($id);
-            if ($detail) {
-                $detail->update($request->all());
-
+    
+            $barang_id = $request->barang_id;
+            $jumlah    = $request->jumlah;
+    
+            $stok = StokModel::where('barang_id', $barang_id)->first();
+    
+            if (!$stok || $stok->stok_jumlah < $jumlah) {
                 return response()->json([
-                    'status'  => true,
-                    'message' => 'Data Penjualan Detail berhasil diupdate.',
+                    'status'  => false,
+                    'message' => 'Stok tidak mencukupi. Sisa stok: ' . ($stok ? $stok->stok_jumlah : 0),
                 ]);
             }
-
-            return response()->json([
-                'status'  => false,
-                'message' => 'Data tidak ditemukan.',
-            ]);
+    
+            DB::beginTransaction();
+            try {
+                $stok->stok_jumlah -= $jumlah;
+                $stok->stok_tanggal = now();
+                $stok->save();
+    
+                PenjualanDetailModel::create([
+                    'penjualan_id' => $request->penjualan_id,
+                    'barang_id'    => $barang_id,
+                    'harga'        => $request->harga,
+                    'jumlah'       => $jumlah,
+                ]);
+    
+                DB::commit();
+    
+                return response()->json([
+                    'status'  => true,
+                    'message' => 'Data Penjualan Detail berhasil ditambahkan dan stok dikurangi.',
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage(),
+                ]);
+            }
         }
     }
 
     public function edit_ajax(string $id)
     {
         $detail = PenjualanDetailModel::find($id);
-        $penjualan = PenjualanModel::all();
-        $barang = BarangModel::all();
+        $barang = BarangModel::select('barang_id', 'barang_nama', 'harga_jual')->get();
+        $penjualan = PenjualanModel::select('penjualan_id', 'penjualan_kode')->get();
+        
         return view('penjualan_detail.edit_ajax', [
-            'detail' => $detail,
+            'detail'    => $detail,
+            'barang'    => $barang,
             'penjualan' => $penjualan,
-            'barang' => $barang,
         ]);
     }
 
     public function update_ajax(Request $request, $id)
-    {
-        if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'barang_id'    => ['required', 'integer', 'exists:m_barang,barang_id'],
-                'penjualan_id'  => ['required', 'integer', 'exists:t_penjualan,penjualan_id'], // validasi supplier
-                'harga' => ['required', 'integer', 'min:1'],
-                'jumlah'  => ['required', 'integer', 'min:1'],
-            ];
+{
+    if ($request->ajax() || $request->wantsJson()) {
+        $rules = [
+            'barang_id'    => ['required', 'integer', 'exists:m_barang,barang_id'],
+            'penjualan_id' => ['required', 'integer', 'exists:t_penjualan,penjualan_id'],
+            'harga'        => ['required', 'integer', 'min:1'],
+            'jumlah'       => ['required', 'integer', 'min:1'],
+        ];
 
-            $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'status'   => false,
-                    'message'  => 'Validasi gagal.',
-                    'msgField' => $validator->errors(),
-                ]);
-            }
+        if ($validator->fails()) {
+            return response()->json([
+                'status'   => false,
+                'message'  => 'Validasi gagal.',
+                'msgField' => $validator->errors(),
+            ]);
+        }
 
-            $detail = PenjualanDetailModel::find($id);
-            if ($detail) {
-                $detail->update($request->all());
+        $detail = PenjualanDetailModel::find($id);
 
-                return response()->json([
-                    'status'  => true,
-                    'message' => 'Data Penjualan Detail berhasil diupdate.',
-                ]);
-            }
-
+        if (!$detail) {
             return response()->json([
                 'status'  => false,
                 'message' => 'Data tidak ditemukan.',
             ]);
         }
+
+        DB::beginTransaction();
+        try {
+            $barang_id_lama = $detail->barang_id;
+            $jumlah_lama    = $detail->jumlah;
+
+            $barang_id_baru = $request->barang_id;
+            $jumlah_baru    = $request->jumlah;
+
+            // Jika barang lama, kembalikan stoknya terlebih dahulu
+            $stok_lama = StokModel::where('barang_id', $barang_id_lama)->first();
+            if ($stok_lama) {
+                $stok_lama->stok_jumlah += $jumlah_lama;
+                $stok_lama->stok_tanggal = now();
+                $stok_lama->save();
+            }
+
+            // Ambil stok barang baru untuk dicek ketersediaan
+            $stok_baru = StokModel::where('barang_id', $barang_id_baru)->first();
+
+            if (!$stok_baru || $stok_baru->stok_jumlah < $jumlah_baru) {
+                DB::rollBack();
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Stok tidak mencukupi. Sisa stok: ' . ($stok_baru->stok_jumlah ?? 0),
+                ]);
+            }
+
+            // Kurangi stok sesuai jumlah baru
+            $stok_baru->stok_jumlah -= $jumlah_baru;
+            $stok_baru->stok_tanggal = now();
+            $stok_baru->save();
+
+            // Update data penjualan detail
+            $detail->update([
+                'barang_id'    => $barang_id_baru,
+                'penjualan_id' => $request->penjualan_id,
+                'harga'        => $request->harga,
+                'jumlah'       => $jumlah_baru,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Data Penjualan Detail berhasil diupdate dan stok diperbarui.',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status'  => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ]);
+        }
     }
+}
 
     public function confirm_ajax(string $id)
     {

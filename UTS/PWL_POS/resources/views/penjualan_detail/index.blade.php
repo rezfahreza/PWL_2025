@@ -6,8 +6,8 @@
         <h3 class="card-title">{{ $page->title }}</h3>
         <div class="card-tools">
             <button onclick="modalAction('{{ url('/penjualan_detail/import') }}')" class="btn btn-sm btn-info mt-1">Import Detail Penjualan</button>
-            <a href="{{ url('/penjualan_detail/export_excel') }}" class="btn btn-sm btn-primary mt-1"><i class="fa fa-fileexcel"></i> Export Detail Penjualan (Excel)</a>
-            <a href="{{ url('/penjualan_detail/export_pdf') }}" class="btn btn-sm mt-1 btn-warning"><i class="fa fa-filepdf"></i> Export Detail Penjualan (PDF)</a>
+            <a href="{{ url('/penjualan_detail/export_excel') }}" class="btn btn-sm btn-primary mt-1"><i class="fa fa-file excel"></i> Export Detail Penjualan (Excel)</a>
+            <a href="{{ url('/penjualan_detail/export_pdf') }}" class="btn btn-sm mt-1 btn-warning"><i class="fa fa-file pdf"></i> Export Detail Penjualan (PDF)</a>
             <button onclick="modalAction('{{ url('penjualan_detail/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
         </div>
     </div>

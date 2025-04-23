@@ -54,10 +54,10 @@
     $(document).ready(function () {
         $("#form-tambah").validate({
             rules: {
-                penjualan_id: { required: true, minlength: 1, maxlength: 10 },
-                barang_id: { required: true, minlength: 1, maxlength: 10 },
-                harga: { required: true, minlength: 1, maxlength: 100 },
-                jumlah: { required: true, minlength: 1, maxlength: 100 },
+                penjualan_id: { required: true },
+                barang_id: { required: true },
+                harga: { required: true, number: true, min: 1 },
+                jumlah: { required: true, number: true, min: 1 },
             },
             submitHandler: function (form) {
                 $.ajax({
@@ -66,13 +66,16 @@
                     data: $(form).serialize(),
                     success: function (response) {
                         if (response.status) {
-                            $('#myModal').modal('hide');
+                            $('#modal-master').modal('hide');
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil',
                                 text: response.message
                             });
-                            dataSupplier.ajax.reload();
+                            $('#form-tambah')[0].reset();
+                            $('.error-text').text('');
+                            $('.is-invalid').removeClass('is-invalid');
+                            dataDetail.ajax.reload(); // ganti jika variabel DataTable-nya berbeda
                         } else {
                             $('.error-text').text('');
                             $.each(response.msgField, function (prefix, val) {
@@ -93,17 +96,18 @@
                 error.addClass('invalid-feedback');
                 element.closest('.form-group').append(error);
             },
-            highlight: function (element, errorClass, validClass) {
+            highlight: function (element) {
                 $(element).addClass('is-invalid');
             },
-            unhighlight: function (element, errorClass, validClass) {
+            unhighlight: function (element) {
                 $(element).removeClass('is-invalid');
             }
         });
+
         $('#barang_id').on('change', function () {
-        var selected = $(this).find('option:selected');
-        var harga = selected.data('harga') || 0; // default 0 kalau kosong
-        $('#harga').val(harga);
+            var selected = $(this).find('option:selected');
+            var harga = selected.data('harga') || 0;
+            $('#harga').val(harga);
         });
     });
 </script>

@@ -480,7 +480,7 @@ class PenjualanController extends Controller
     }
 
     public function export_pdf(){
-        $barang = PenjualanModel::with('user', 'detail.barang') // tambahkan barang di dalam detail
+        $barang = PenjualanModel::with('user', 'penjualanDetail.barang') // tambahkan barang di dalam detail
                     ->select('penjualan_id', 'user_id', 'pembeli', 'penjualan_kode', 'penjualan_tanggal')
                     ->orderBy('penjualan_id')
                     ->get();

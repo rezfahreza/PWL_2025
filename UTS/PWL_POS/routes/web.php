@@ -213,7 +213,7 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
             Route::post('/list', [PenjualanDetailController::class, 'list']);
             Route::get('/create', [PenjualanDetailController::class, 'create']);
             Route::post("/", [PenjualanDetailController::class, 'store']);
-            Route::get('/create_ajax', [PenjualanDetailController::class, 'create_ajax'])->name('penjualan.create_ajax');
+            Route::get('/create_ajax', [PenjualanDetailController::class, 'create_ajax']);
             Route::post('/ajax', [PenjualanDetailController::class, 'store_ajax']);
             Route::get('/{id}', [PenjualanDetailController::class, 'show']);
             Route::get('/{id}/edit', [PenjualanDetailController::class, 'edit']);
