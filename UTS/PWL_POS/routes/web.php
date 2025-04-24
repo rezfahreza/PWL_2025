@@ -183,7 +183,7 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
         });
     });
 
-    Route::middleware(['authorize:ADM,MNG,STF'])->group(function(){
+    Route::middleware(['authorize:ADM,MNG,STF,KSR'])->group(function(){
         Route::group(['prefix' => 'penjualan'], function () {
             Route::get('/', [PenjualanController::class, 'index']);
             Route::post('/list', [PenjualanController::class, 'list']);
@@ -207,7 +207,7 @@ Route::middleware(['auth'])->group(function () { // artinya semua route di dalam
         });
     });
 
-    Route::middleware(['authorize:ADM,MNG,STF'])->group(function(){
+    Route::middleware(['authorize:ADM,MNG,STF,KSR'])->group(function(){
         Route::group(['prefix' => 'penjualan_detail'], function () {
             Route::get('/', [PenjualanDetailController::class, 'index']);
             Route::post('/list', [PenjualanDetailController::class, 'list']);
